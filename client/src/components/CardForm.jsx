@@ -4,16 +4,16 @@ import Card from "react-bootstrap/Card";
 function CardForm(props) {
     return (
         <Card style={{ marginBottom: "10px" }}>
-            {/* <Card.Header>Featured</Card.Header> */}
             <Card.Body>
-                <Card.Title
-                    required
-                    //  style={{ color: props.marked ? "red" : "black" }}
-                >
+                <Card.Title style={{ color: props.marked ? "red" : "black" }}>
                     {props.title}
                 </Card.Title>
-                <Card.Text required>{props.text}</Card.Text>
-                <Button onClick={() => props.mark(props.id)} variant="primary">
+                <Card.Text>{props.text}</Card.Text>
+                <Button
+                    style={{ marginRight: "10px" }}
+                    onClick={() => props.mark(props.id)}
+                    variant="primary"
+                >
                     Mark
                 </Button>
                 <Button onClick={() => props.delete(props.id)} variant="danger">

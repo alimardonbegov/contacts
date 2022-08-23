@@ -1,53 +1,19 @@
-// import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import CreateForm from "./components/CreateForm";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CardForm from "./components/CardForm";
+import { request } from "./utils/request";
 
 function App() {
-    const [input, setInput] = useState({ name: "", text: "" });
+    const [input, setInput] = useState({ name: "", text: "", marked: false });
     const [contactList, setContactList] = useState([]);
+    const [isDisabled, setIsDisabled] = useState(true);
 
-    function handleChange(e) {
-        const { name, value } = e;
-        setInput((prevValue) => {
-            return { ...prevValue, [name]: value };
-        });
-    }
-    async function createContact(e) {
-        e.preventDefault();
-        const newContact = await request("http://localhost:5000/api", "POST", input);
-        setContactList([...contactList, newContact]);
-        setInput({ name: "", text: "" });
-    }
-
-    async function deleteContact(id) {
-        console.log(id);
-        await request(`http://localhost:5000/api/${id}`, "DELETE", null);
-        setContactList(contactList.filter((contact) => id !== contact.id));
-    }
-    console.log(contactList);
-    async function request(url, method = "GET", data = null) {
-        try {
-            const headers = {};
-            let body;
-
-            if (data) {
-                headers["Content-Type"] = "application/json";
-                body = JSON.stringify(data);
-            }
-
-            const response = await fetch(url, {
-                method,
-                headers,
-                body,
-            });
-            return await response.json();
-        } catch (e) {
-            console.log(e.message);
-        }
-    }
+    useMemo(() => {
+        input.name.length > 0 && input.text.length > 0 && setIsDisabled(false);
+        (input.name.length === 0 || input.text.length === 0) && setIsDisabled(true);
+    }, [input]);
 
     useEffect(() => {
         fetch("http://localhost:5000/api")
@@ -55,11 +21,43 @@ function App() {
             .then((data) => setContactList(data));
     }, []);
 
+    function handleChange(e) {
+        const { name, value } = e;
+        setInput((prevValue) => {
+            return { ...prevValue, [name]: value };
+        });
+    }
+
+    async function createContact(e) {
+        e.preventDefault();
+        const newContact = await request("http://localhost:5000/api", "POST", input);
+        setContactList([...contactList, newContact]);
+        setInput({ name: "", text: "", marked: false });
+        setIsDisabled(true);
+    }
+
+    async function deleteContact(id) {
+        await request(`http://localhost:5000/api/${id}`, "DELETE", null);
+        setContactList(contactList.filter((contact) => id !== contact.id));
+    }
+
+    async function markContact(id) {
+        const currentContact = contactList.find((c) => c.id === id);
+        const updatedContact = await request(`http://localhost:5000/api/${id}`, "PUT", {
+            ...currentContact,
+            marked: !currentContact.marked,
+        });
+        currentContact.marked = updatedContact.marked;
+        setInput({ name: "", text: "", marked: false });
+    }
+
     return (
         <div className="App">
+            <h1> Contact List</h1>
             <CreateForm
                 name={input.name}
                 text={input.text}
+                disabled={isDisabled}
                 onChange={handleChange}
                 onClick={(e) => createContact(e)}
             />
@@ -71,6 +69,7 @@ function App() {
                     text={contact.text}
                     id={contact.id}
                     marked={contact.marked}
+                    mark={markContact}
                     delete={deleteContact}
                 />
             ))}
@@ -79,19 +78,3 @@ function App() {
 }
 
 export default App;
-
-// const [dataBackend, setDataBackend] = useState({});
-
-// useEffect(() => {
-//     fetch("/api")
-//         .then((res) => res.json())
-//         .then((data) => setDataBackend(data));
-// }, []);
-
-// {typeof dataBackend.users === "undefined" ? (
-//     <p> Loading...</p>
-// ) : (
-//     dataBackend.users.map((person, index) => (
-//         <CardForm key={index} title={person.name} text={person.age} />
-//     ))
-// )}
