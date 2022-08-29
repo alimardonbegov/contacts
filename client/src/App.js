@@ -62,17 +62,21 @@ function App() {
                 onClick={(e) => createContact(e)}
             />
 
-            {contactList.map((contact, index) => (
-                <CardForm
-                    key={index}
-                    title={contact.name}
-                    text={contact.text}
-                    id={contact.id}
-                    marked={contact.marked}
-                    mark={markContact}
-                    delete={deleteContact}
-                />
-            ))}
+            {contactList.length !== 0 ? (
+                contactList.map((contact, index) => (
+                    <CardForm
+                        key={index}
+                        title={contact.name}
+                        text={contact.text}
+                        id={contact.id}
+                        marked={contact.marked}
+                        mark={markContact}
+                        delete={deleteContact}
+                    />
+                ))
+            ) : (
+                <h2> No contacts here yet </h2>
+            )}
         </div>
     );
 }

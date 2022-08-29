@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 
 function CardForm(props) {
     return (
-        <Card style={{ marginBottom: "10px" }}>
+        <Card style={{ marginBottom: "10px", maxWidth: "800px" }}>
             <Card.Body>
                 <Card.Title style={{ color: props.marked ? "red" : "black" }}>
                     {props.title}

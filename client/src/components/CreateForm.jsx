@@ -3,7 +3,7 @@ import MyButton from "./UI/MyButton";
 
 function CreateForm(props) {
     return (
-        <Form style={{ display: "flex" }}>
+        <Form style={{ display: "flex", flexWrap: "wrap" }}>
             <Form.Group
                 style={{ display: "flex", width: " 300px", marginRight: "30px" }}
                 className="mb-3"
@@ -13,6 +13,7 @@ function CreateForm(props) {
                     <Form.Label style={{ margin: "0" }}>Name</Form.Label>
                 </div>
                 <Form.Control
+                    autocomplete="off"
                     type="text"
                     placeholder="Name"
                     name="name"
@@ -29,6 +30,7 @@ function CreateForm(props) {
                     <Form.Label style={{ margin: "0" }}>Phone</Form.Label>
                 </div>
                 <Form.Control
+                    autocomplete="off"
                     type="text"
                     name="text"
                     placeholder="Phone number"
